@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "899f86c5953a3ae37d6a391ce72ba27b",
+    "hash": "c8ad07ec3245dc594ebe2fc378d35f4b",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -140,12 +140,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "dbeacc7bf5bcec39f7e02aa751adac2cb1ff256a"
+                "reference": "da983502786021d870e6b7f6536c70b0e2da8800"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/dbeacc7bf5bcec39f7e02aa751adac2cb1ff256a",
-                "reference": "dbeacc7bf5bcec39f7e02aa751adac2cb1ff256a",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/da983502786021d870e6b7f6536c70b0e2da8800",
+                "reference": "da983502786021d870e6b7f6536c70b0e2da8800",
                 "shasum": ""
             },
             "require": {
@@ -202,7 +202,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2015-01-17 21:05:51"
+            "time": "2015-01-30 09:53:59"
         },
         {
             "name": "doctrine/collections",
@@ -463,6 +463,53 @@
                 "parser"
             ],
             "time": "2014-09-09 13:34:57"
+        },
+        {
+            "name": "iono/dispatcher",
+            "version": "0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ytake/Iono.Dispatcher.git",
+                "reference": "35ecbb45368c846526b36c858f764ae31cfbe2b4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ytake/Iono.Dispatcher/zipball/35ecbb45368c846526b36c858f764ae31cfbe2b4",
+                "reference": "35ecbb45368c846526b36c858f764ae31cfbe2b4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*",
+                "satooshi/php-coveralls": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/invariant.php"
+                ],
+                "psr-4": {
+                    "Iono\\Dispatcher\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "yuuki takezawa",
+                    "email": "yuuki.takezawa@comnect.jp.net"
+                }
+            ],
+            "description": "flux style dispatcher",
+            "keywords": [
+                "dispatcher",
+                "events"
+            ],
+            "time": "2015-01-29 15:46:38"
         },
         {
             "name": "nikic/php-parser",

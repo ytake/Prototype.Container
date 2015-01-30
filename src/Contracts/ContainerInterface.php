@@ -9,10 +9,29 @@ interface ContainerInterface
 {
 
     /**
-     * @param $context
+     * @param $abstract
      * @param array $parameters
      * @return mixed
      */
-    public function newInstance($context, $parameters = []);
+    public function newInstance($abstract, array $parameters = []);
+
+    /**
+     * @param $abstract
+     * @param $concrete
+     * @param bool $singleton
+     */
+    public function binder($abstract, $concrete, $singleton = false);
+
+    /**
+     * @param $abstract
+     * @param $concrete
+     */
+    public function singleton($abstract, $concrete);
+    /**
+     * @param $abstract
+     * @param array $parameters
+     * @return void
+     */
+    public function setParameters($abstract, array $parameters = []);
 
 }

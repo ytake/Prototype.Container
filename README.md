@@ -1,4 +1,6 @@
 # Prototype.Container(develop)
+[![Build Status](https://travis-ci.org/ytake/Prototype.Container.svg?branch=develop)](https://travis-ci.org/ytake/Prototype.Container)
+
 easy dependency injection / service container  
 **for >=php5.5**
 

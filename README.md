@@ -5,6 +5,7 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/54d0e9e83ca0840b1900003c/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54d0e9e83ca0840b1900003c)
 ![Iono.Container](http://img.shields.io/badge/iono-container-black.svg?style=flat-square)  
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/d8a4459f-1af6-4bd6-b5f0-6b70693d6a44/big.png)](https://insight.sensiolabs.com/projects/d8a4459f-1af6-4bd6-b5f0-6b70693d6a44)
 easy dependency injection / service container  
 **for >=php5.5**
 

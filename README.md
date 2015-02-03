@@ -1,5 +1,9 @@
 # Prototype.Container(develop)
-[![Build Status](https://travis-ci.org/ytake/Prototype.Container.svg?branch=develop)](https://travis-ci.org/ytake/Prototype.Container)
+[![Build Status](http://img.shields.io/travis/ytake/Prototype.Container/develop.svg?style=flat-square)](https://travis-ci.org/ytake/Prototype.Container)
+[![Coverage Status](http://img.shields.io/coveralls/ytake/Prototype.Container/develop.svg?style=flat-square)](https://coveralls.io/r/ytake/Prototype.Container?branch=develop)
+[![Scrutinizer Code Quality](http://img.shields.io/scrutinizer/g/ytake/Prototype.Container.svg?style=flat-square)](https://scrutinizer-ci.com/g/ytake/Prototype.Container/?branch=develop)
+[![Dependency Status](https://www.versioneye.com/user/projects/54d0e9e83ca0840b1900003c/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54d0e9e83ca0840b1900003c)
+![Iono.Container](http://img.shields.io/badge/iono-container-black.svg?style=flat-square)  
 
 easy dependency injection / service container  
 **for >=php5.5**

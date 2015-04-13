@@ -4,6 +4,7 @@ namespace Iono\Container;
 use ArrayAccess;
 use ReflectionClass;
 use Iono\Container\Contracts\ContainerInterface;
+use Iono\Container\Exception\InstantiableException;
 
 /**
  * Class Container
@@ -82,7 +83,8 @@ class Container implements ContainerInterface, ArrayAccess
     /**
      * @param $abstract
      * @param array $parameters
-     * @return mixed|object
+     * @return mixed|null|object
+     * @throws InstantiableException
      */
     protected function resolveInstance($abstract, array $parameters = [])
     {
@@ -101,16 +103,20 @@ class Container implements ContainerInterface, ArrayAccess
 
         try {
             $reflectionClass = new ReflectionClass($concrete);
-            $dependencies = $this->resolveDependencies($reflectionClass, $parameters);
-
-            if (isset($this->shares[$abstract])) {
-                return $this->resolveSingleton($reflectionClass, $abstract, $dependencies);
-            }
-            $resolveInstance = $reflectionClass->newInstanceArgs($dependencies);
-
-        } catch (\Exception $exception) {
-            $resolveInstance = $abstract;
+        } catch (\Exception $e) {
+            return $concrete;
         }
+        if (!$reflectionClass->isInstantiable()) {
+            throw new InstantiableException("Errors");
+        }
+
+        $dependencies = $this->resolveDependencies($reflectionClass, $parameters);
+
+        if (isset($this->shares[$abstract])) {
+            return $this->resolveSingleton($reflectionClass, $abstract, $dependencies);
+        }
+        $resolveInstance = $reflectionClass->newInstanceArgs($dependencies);
+
         return $resolveInstance;
     }
 
@@ -136,6 +142,7 @@ class Container implements ContainerInterface, ArrayAccess
     protected function resolveDependencies(ReflectionClass $reflectionClass, $parameters = [])
     {
         $resolved = [];
+
         if (!is_null($constructor = $reflectionClass->getConstructor())) {
             if ($constructorParameters = $constructor->getParameters()) {
                 foreach ($constructorParameters as $constructorParameter) {
@@ -153,7 +160,6 @@ class Container implements ContainerInterface, ArrayAccess
                         $resolved[$constructorParameter->getName()]
                             = $parameters[$constructorParameter->getName()];
                     }
-
                 }
             }
         }
@@ -176,25 +182,15 @@ class Container implements ContainerInterface, ArrayAccess
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Whether a offset exists
-     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset <p>
-     * An offset to check for.
-     * </p>
-     * @return boolean true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
+     * @param mixed $offset
+     * @return bool
      */
     public function offsetExists($offset)
     {
-        // TODO: Implement offsetExists() method.
+        return isset($this->bindings[$offset]);
     }
 
     /**
-     * Offset to retrieve
-     * @link http://php.net/manual/en/arrayaccess.offsetget.php
      * @param mixed $offset
      * @return object
      */
@@ -204,16 +200,8 @@ class Container implements ContainerInterface, ArrayAccess
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to set
-     * @link http://php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset <p>
-     * The offset to assign the value to.
-     * </p>
-     * @param mixed $value <p>
-     * The value to set.
-     * </p>
-     * @return void
+     * @param mixed $offset
+     * @param mixed $value
      */
     public function offsetSet($offset, $value)
     {
@@ -221,17 +209,11 @@ class Container implements ContainerInterface, ArrayAccess
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to unset
-     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset <p>
-     * The offset to unset.
-     * </p>
-     * @return void
+     * @param mixed $offset
      */
     public function offsetUnset($offset)
     {
-        // TODO: Implement offsetUnset() method.
+        unset($this->bindings[$offset]);
     }
 
 

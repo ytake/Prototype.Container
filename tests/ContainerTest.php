@@ -83,6 +83,20 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $instance = $this->container->newInstance("ResolveInterface");
         $this->assertSame("singleton", $instance->getValue());
     }
+
+    /**
+     * @expectedException Iono\Container\Exception\InstantiableException
+     */
+    public function testAbstractClass()
+    {
+        $this->container->newInstance("Resolver");
+    }
+
+    public function testAbstractResolveClass()
+    {
+        $this->container->binder("AbstractResolver", "extendClass");
+        $this->assertInstanceOf("Resolver", $this->container->newInstance("Resolver"));
+    }
 }
 
 /**
@@ -129,5 +143,23 @@ class ResolveConstructor
     public function getArg()
     {
         return $this->arg;
+    }
+}
+
+
+abstract class AbstractResolver
+{
+
+}
+
+class extendClass extends AbstractResolver {
+
+}
+
+class Resolver
+{
+    public function __construct(AbstractResolver $class)
+    {
+        $this->class = $class;
     }
 }

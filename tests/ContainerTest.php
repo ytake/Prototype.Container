@@ -2,12 +2,12 @@
 
 class ContainerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Iono\Container\Container */
+    /** @var \Prototype\Container\Container */
     protected $container;
 
     protected function setUp()
     {
-        $this->container = new \Iono\Container\Container();
+        $this->container = new \Prototype\Container\Container();
     }
 
     public function testBasicInstance()
@@ -85,7 +85,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Iono\Container\Exception\InstantiableException
+     * @expectedException Prototype\Container\Exception\InstantiableException
      */
     public function testAbstractClass()
     {

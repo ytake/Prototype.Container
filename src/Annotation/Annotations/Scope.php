@@ -1,5 +1,5 @@
 <?php
-namespace Iono\Container\Annotation\Annotations;
+namespace Prototype\Container\Annotation\Annotations;
 
 /**
  * @Annotation

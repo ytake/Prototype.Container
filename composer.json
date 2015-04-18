@@ -17,13 +17,7 @@
     }
   ],
   "require": {
-    "php": ">=5.5",
-    "iono/dispatcher": "0.*",
-    "nikic/php-parser": "1.*",
-    "classpreloader/classpreloader": "1.*",
-    "doctrine/annotations": "1.*",
-    "doctrine/common": "2.*",
-    "symfony/finder": "2.*"
+    "php": ">=5.5"
   },
   "require-dev": {
     "phpunit/phpunit": "4.*",
@@ -32,12 +26,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Iono\\Container\\": "src/"
+      "Prototype\\Container\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Iono\\_TestContainer\\": [
+      "Prototype\\_TestContainer\\": [
         "tests/"
       ]
     }

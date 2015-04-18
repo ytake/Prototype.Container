@@ -1,14 +1,14 @@
 <?php
-namespace Iono\Container;
+namespace Prototype\Container;
 
 use ArrayAccess;
 use ReflectionClass;
-use Iono\Container\Contracts\ContainerInterface;
-use Iono\Container\Exception\InstantiableException;
+use Prototype\Container\Contracts\ContainerInterface;
+use Prototype\Container\Exception\InstantiableException;
 
 /**
  * Class Container
- * @package Iono\Container
+ * @package Prototype\Container
  * @author yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
 class Container implements ContainerInterface, ArrayAccess
@@ -151,14 +151,13 @@ class Container implements ContainerInterface, ArrayAccess
                         $resolved[] = $this->resolveInstance($constructorParameter->getClass()->name);
                     }
 
-                    if (isset($this->parameters[$reflectionClass->getName()][$constructorParameter->getName()])) {
-                        $resolved[$constructorParameter->getName()]
-                            = $this->parameters[$reflectionClass->getName()][$constructorParameter->getName()];
+                    if (isset($this->parameters[$reflectionClass->name][$constructorParameter->name])) {
+                        $resolved[$constructorParameter->name]
+                            = $this->parameters[$reflectionClass->name][$constructorParameter->name];
                     }
 
-                    if (isset($parameters[$constructorParameter->getName()])) {
-                        $resolved[$constructorParameter->getName()]
-                            = $parameters[$constructorParameter->getName()];
+                    if (isset($parameters[$constructorParameter->name])) {
+                        $resolved[$constructorParameter->name] = $parameters[$constructorParameter->name];
                     }
                 }
             }

@@ -1,9 +1,9 @@
 <?php
-namespace Iono\Container\Contracts;
+namespace Prototype\Container\Contracts;
 
 /**
  * Interface ContainerInterface
- * @package Iono\Container\Contracts
+ * @package Prototype\Container\Contracts
  */
 interface ContainerInterface 
 {

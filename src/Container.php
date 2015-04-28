@@ -2,7 +2,6 @@
 namespace Prototype\Container;
 
 use ReflectionClass;
-use Prototype\Container\Contracts\ContainerInterface;
 use Prototype\Container\Exception\InstantiableException;
 
 /**
@@ -10,12 +9,8 @@ use Prototype\Container\Exception\InstantiableException;
  * @package Prototype\Container
  * @author yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
-class Container implements ContainerInterface
+class Container implements ContainerInterface, ContextualInterface
 {
-
-    const PROTOTYPE = 1;
-
-    const SINGLETON = 2;
 
     /** @var array */
     protected $bindings = [];
@@ -26,10 +21,14 @@ class Container implements ContainerInterface
     /** @var array */
     protected $shares = [];
 
+    /** @var array  */
+    protected $component = [];
+
     /** @var */
     private static $instance;
 
     /**
+     * get instance from container
      * @param $abstract
      * @param array $parameters
      * @return object
@@ -40,10 +39,11 @@ class Container implements ContainerInterface
     }
 
     /**
+     * container binding
      * @param $abstract
      * @param $concrete
      * @param bool $singleton
-     * @return $this
+     * @return Component
      */
     public function register($abstract, $concrete, $singleton = false)
     {
@@ -51,7 +51,7 @@ class Container implements ContainerInterface
         if ($singleton) {
             $this->shares[$abstract] = true;
         }
-        return $this;
+        return new Component($this, $abstract);
     }
 
     /**
@@ -108,9 +108,7 @@ class Container implements ContainerInterface
         if (isset($this->shares[$abstract])) {
             return $this->resolveSingleton($reflectionClass, $abstract, $dependencies);
         }
-        $resolveInstance = $reflectionClass->newInstanceArgs($dependencies);
-
-        return $resolveInstance;
+        return $reflectionClass->newInstanceArgs($dependencies);
     }
 
     /**
@@ -167,10 +165,34 @@ class Container implements ContainerInterface
             $this->bindings = [];
             $this->parameters = [];
             $this->shares = [];
+            $this->component = [];
         }
         unset($this->bindings[$abstract]);
         unset($this->parameters[$abstract]);
         unset($this->shares[$abstract]);
+    }
+
+    /**
+     * @param $name
+     * @param $abstract
+     */
+    public function addComponent($name, $abstract)
+    {
+        $this->component[$name][$abstract] = $this->bindings[$abstract];
+    }
+
+    /**
+     * @param $name
+     * @return null|object
+     */
+    public function qualifier($name)
+    {
+        if(isset($this->component[$name])) {
+            foreach($this->component[$name] as $key => $bind) {
+                return $this->newInstance($key);
+            }
+        }
+        return null;
     }
 
 }

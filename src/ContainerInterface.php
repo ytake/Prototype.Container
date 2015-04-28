@@ -1,9 +1,9 @@
 <?php
-namespace Prototype\Container\Contracts;
+namespace Prototype\Container;
 
 /**
  * Interface ContainerInterface
- * @package Prototype\Container\Contracts
+ * @package Prototype\Container
  */
 interface ContainerInterface 
 {
@@ -27,6 +27,7 @@ interface ContainerInterface
      * @param $concrete
      */
     public function singleton($abstract, $concrete);
+
     /**
      * @param $abstract
      * @param array $parameters

@@ -94,8 +94,9 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testAbstractResolveClass()
     {
-        $this->container->register("AbstractResolver", "extendClass");
+        $this->container->register("AbstractResolver", "extendClass")->component('sample');
         $this->assertInstanceOf("Resolver", $this->container->newInstance("Resolver"));
+        $this->assertInstanceOf("extendClass", $this->container->qualifier('sample'));
     }
 }
 

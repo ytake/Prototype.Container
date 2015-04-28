@@ -20,7 +20,7 @@ interface ContainerInterface
      * @param $concrete
      * @param bool $singleton
      */
-    public function binder($abstract, $concrete, $singleton = false);
+    public function register($abstract, $concrete, $singleton = false);
 
     /**
      * @param $abstract

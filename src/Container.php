@@ -1,7 +1,6 @@
 <?php
 namespace Prototype\Container;
 
-use ArrayAccess;
 use ReflectionClass;
 use Prototype\Container\Contracts\ContainerInterface;
 use Prototype\Container\Exception\InstantiableException;
@@ -11,7 +10,7 @@ use Prototype\Container\Exception\InstantiableException;
  * @package Prototype\Container
  * @author yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
-class Container implements ContainerInterface, ArrayAccess
+class Container implements ContainerInterface
 {
 
     const PROTOTYPE = 1;
@@ -46,7 +45,7 @@ class Container implements ContainerInterface, ArrayAccess
      * @param bool $singleton
      * @return $this
      */
-    public function binder($abstract, $concrete, $singleton = false)
+    public function register($abstract, $concrete, $singleton = false)
     {
         $this->bindings[$abstract] = $concrete;
         if ($singleton) {
@@ -61,13 +60,7 @@ class Container implements ContainerInterface, ArrayAccess
      */
     public function singleton($abstract, $concrete)
     {
-        $this->binder($abstract, $concrete, true);
-    }
-
-
-    public function contextual($name)
-    {
-        // @todo
+        $this->register($abstract, $concrete, true);
     }
 
     /**
@@ -179,41 +172,5 @@ class Container implements ContainerInterface, ArrayAccess
         unset($this->parameters[$abstract]);
         unset($this->shares[$abstract]);
     }
-
-    /**
-     * @param mixed $offset
-     * @return bool
-     */
-    public function offsetExists($offset)
-    {
-        return isset($this->bindings[$offset]);
-    }
-
-    /**
-     * @param mixed $offset
-     * @return object
-     */
-    public function offsetGet($offset)
-    {
-        return $this->newInstance($offset);
-    }
-
-    /**
-     * @param mixed $offset
-     * @param mixed $value
-     */
-    public function offsetSet($offset, $value)
-    {
-        // TODO: Implement offsetSet() method.
-    }
-
-    /**
-     * @param mixed $offset
-     */
-    public function offsetUnset($offset)
-    {
-        unset($this->bindings[$offset]);
-    }
-
 
 }

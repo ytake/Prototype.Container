@@ -15,11 +15,11 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $context = $this->container->newInstance("iono.container.tests");
         $this->assertSame("iono.container.tests", $context);
 
-        $this->container->binder("std.class", new \stdClass());
+        $this->container->register("std.class", new \stdClass());
         $context = $this->container->newInstance("std.class");
         $this->assertInstanceOf("stdClass", $context);
 
-        $this->container->binder("ResolveInterface", "ResolveClass");
+        $this->container->register("ResolveInterface", "ResolveClass");
         $instance = $this->container->newInstance("ResolveInterface");
         $this->assertInstanceOf("ResolveClass", $instance);
         $instance->setValue("singleton");
@@ -39,7 +39,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testSeparateInjectParamsInstance()
     {
-        $this->container->binder("ResolveInterface", "ResolveClass");
+        $this->container->register("ResolveInterface", "ResolveClass");
         $this->container->setParameters("ResolveConstructor", ["arg" => "dependency2"]);
         $class = $this->container->newInstance("ResolveConstructor");
         $this->assertInstanceOf("ResolveConstructor", $class);
@@ -52,8 +52,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetInstance()
     {
-        $this->container->binder("ResolveInterface", "ResolveClass");
-        $this->container->binder("stdclass", "stdClass");
+        $this->container->register("ResolveInterface", "ResolveClass");
+        $this->container->register("stdclass", "stdClass");
         $this->container->setParameters("ResolveConstructor", ["arg" => "dependency2"]);
         $class = $this->container->newInstance("ResolveConstructor");
         $this->assertInstanceOf("ResolveConstructor", $class);
@@ -68,7 +68,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetClosure()
     {
-        $this->container->binder("closure", function () {
+        $this->container->register("closure", function () {
             return new \stdClass();
         });
         $this->container->newInstance('closure');
@@ -94,7 +94,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testAbstractResolveClass()
     {
-        $this->container->binder("AbstractResolver", "extendClass");
+        $this->container->register("AbstractResolver", "extendClass");
         $this->assertInstanceOf("Resolver", $this->container->newInstance("Resolver"));
     }
 }

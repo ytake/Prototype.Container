@@ -18,9 +18,10 @@ interface ContainerInterface
     /**
      * @param $abstract
      * @param $concrete
-     * @param bool $singleton
+     * @param int $scope
+     * @return mixed
      */
-    public function register($abstract, $concrete, $singleton = false);
+    public function register($abstract, $concrete, $scope = Scope::PROTOTYPE);
 
     /**
      * @param $abstract
@@ -34,5 +35,23 @@ interface ContainerInterface
      * @return void
      */
     public function setParameters($abstract, array $parameters = []);
+
+    /**
+     * @param $abstract
+     * @return mixed
+     */
+    public function getParameters($abstract);
+
+    /**
+     * @param $abstract
+     * @return mixed
+     */
+    public function getBinding($abstract);
+
+    /**
+     * @param $abstract
+     * @return mixed
+     */
+    public function getShare($abstract);
 
 }

@@ -5,72 +5,36 @@ use ReflectionClass;
 use Prototype\Container\Exception\InstantiableException;
 
 /**
- * Class Container
+ * Class Resolver
  * @package Prototype\Container
  * @author yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
-class Container implements ContainerInterface, ContextualInterface
+class Resolver
 {
 
-    /** @var array */
-    protected $bindings = [];
-
-    /** @var array */
-    protected $parameters = [];
-
-    /** @var array */
-    protected $shares = [];
-
-    /** @var array  */
-    protected $component = [];
+    /** @var ContainerInterface */
+    protected $container;
 
     /** @var */
     private static $instance;
 
     /**
-     * get instance from container
+     * @param ContainerInterface $container
+     */
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
+    /**
      * @param $abstract
      * @param array $parameters
-     * @return object
+     * @return mixed|null|object
+     * @throws InstantiableException
      */
-    public function newInstance($abstract, array $parameters = [])
+    public function makeInstance($abstract, array $parameters = [])
     {
         return $this->resolveInstance($abstract, $parameters);
-    }
-
-    /**
-     * container binding
-     * @param $abstract
-     * @param $concrete
-     * @param bool $singleton
-     * @return Component
-     */
-    public function register($abstract, $concrete, $singleton = false)
-    {
-        $this->bindings[$abstract] = $concrete;
-        if ($singleton) {
-            $this->shares[$abstract] = true;
-        }
-        return new Component($this, $abstract);
-    }
-
-    /**
-     * @param $abstract
-     * @param $concrete
-     */
-    public function singleton($abstract, $concrete)
-    {
-        $this->register($abstract, $concrete, true);
-    }
-
-    /**
-     * @param $abstract
-     * @param array $parameters
-     * @return void
-     */
-    public function setParameters($abstract, array $parameters = [])
-    {
-        $this->parameters[$abstract] = $parameters;
     }
 
     /**
@@ -81,10 +45,8 @@ class Container implements ContainerInterface, ContextualInterface
      */
     protected function resolveInstance($abstract, array $parameters = [])
     {
-        $concrete = null;
-        if (isset($this->bindings[$abstract])) {
-            $concrete = $this->bindings[$abstract];
-        }
+        $concrete = (!is_null($this->container->getBinding($abstract))) ?
+            $this->container->getBinding($abstract) : null;
 
         if ($concrete instanceof \Closure) {
             return call_user_func_array($concrete, $parameters);
@@ -105,7 +67,7 @@ class Container implements ContainerInterface, ContextualInterface
 
         $dependencies = $this->resolveDependencies($reflectionClass, $parameters);
 
-        if (isset($this->shares[$abstract])) {
+        if ($this->container->getShare($abstract) === SCOPE::SINGLETON) {
             return $this->resolveSingleton($reflectionClass, $abstract, $dependencies);
         }
         return $reflectionClass->newInstanceArgs($dependencies);
@@ -123,12 +85,13 @@ class Container implements ContainerInterface, ContextualInterface
             self::$instance[$abstract] = $reflectionClass->newInstanceArgs($dependencies);
         }
         return self::$instance[$abstract];
-
     }
 
     /**
      * @param ReflectionClass $reflectionClass
+     * @param array $parameters
      * @return array
+     * @throws InstantiableException
      */
     protected function resolveDependencies(ReflectionClass $reflectionClass, $parameters = [])
     {
@@ -142,9 +105,9 @@ class Container implements ContainerInterface, ContextualInterface
                         $resolved[] = $this->resolveInstance($constructorParameter->getClass()->name);
                     }
 
-                    if (isset($this->parameters[$reflectionClass->name][$constructorParameter->name])) {
+                    if (isset($this->container->getParameters($reflectionClass->name)[$constructorParameter->name])) {
                         $resolved[$constructorParameter->name]
-                            = $this->parameters[$reflectionClass->name][$constructorParameter->name];
+                            = $this->container->getParameters($reflectionClass->name)[$constructorParameter->name];
                     }
 
                     if (isset($parameters[$constructorParameter->name])) {
@@ -154,45 +117,6 @@ class Container implements ContainerInterface, ContextualInterface
             }
         }
         return $resolved;
-    }
-
-    /**
-     * @param null $abstract
-     */
-    public function flushInstance($abstract = null)
-    {
-        if(is_null($abstract)) {
-            $this->bindings = [];
-            $this->parameters = [];
-            $this->shares = [];
-            $this->component = [];
-        }
-        unset($this->bindings[$abstract]);
-        unset($this->parameters[$abstract]);
-        unset($this->shares[$abstract]);
-    }
-
-    /**
-     * @param $name
-     * @param $abstract
-     */
-    public function addComponent($name, $abstract)
-    {
-        $this->component[$name][$abstract] = $this->bindings[$abstract];
-    }
-
-    /**
-     * @param $name
-     * @return null|object
-     */
-    public function qualifier($name)
-    {
-        if(isset($this->component[$name])) {
-            foreach($this->component[$name] as $key => $bind) {
-                return $this->newInstance($key);
-            }
-        }
-        return null;
     }
 
 }

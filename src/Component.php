@@ -17,14 +17,13 @@ class Component
 
     /**
      * @param ContainerInterface $container
-     * @param $bindings
+     * @param $abstract
      */
     public function __construct(ContainerInterface $container, $abstract)
     {
         $this->container = $container;
         $this->abstract = $abstract;
     }
-
 
     /**
      * @param $name

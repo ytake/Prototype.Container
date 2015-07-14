@@ -50,6 +50,7 @@ class Container implements ContainerInterface, ContextualInterface
     /**
      * @param $abstract
      * @param $concrete
+     * @return void
      */
     public function singleton($abstract, $concrete)
     {
@@ -128,18 +129,10 @@ class Container implements ContainerInterface, ContextualInterface
     {
         if(isset($this->component[$name])) {
             foreach($this->component[$name] as $key => $bind) {
-                return $this->newInstance($key);
+                return $this->newInstance($bind);
             }
         }
         return null;
     }
 
-    /**
-     * @param $key
-     * @return null
-     */
-    public function __unset($key)
-    {
-        return null;
-    }
 }

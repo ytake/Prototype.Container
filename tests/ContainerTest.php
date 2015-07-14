@@ -95,8 +95,10 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     public function testAbstractResolveClass()
     {
         $this->container->register("AbstractResolver", "extendClass")->component('sample');
+        $this->container->register("AbstractResolver",'contextualExtendClass')->component('contextual');
         $this->assertInstanceOf("Resolver", $this->container->newInstance("Resolver"));
         $this->assertInstanceOf("extendClass", $this->container->qualifier('sample'));
+        $this->assertInstanceOf("contextualExtendClass", $this->container->qualifier('contextual'));
         $this->container->flushInstance();
         $this->assertNull($this->container->qualifier('sample'));
     }
@@ -107,6 +109,11 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->container->flushInstance();
         $this->assertNull($this->container->qualifier('sample'));
         $this->container->flushInstance('testing');
+    }
+
+    public function testNullReturnQualifier()
+    {
+        $this->assertNull($this->container->qualifier('sample'));
     }
 }
 
@@ -164,6 +171,10 @@ abstract class AbstractResolver
 }
 
 class extendClass extends AbstractResolver {
+
+}
+
+class contextualExtendClass extends AbstractResolver {
 
 }
 

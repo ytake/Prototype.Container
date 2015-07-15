@@ -71,7 +71,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->container->register("closure", function () {
             return new \stdClass();
         });
-        $this->container->newInstance('closure');
+        $this->assertInstanceOf('stdClass', $this->container->newInstance('closure'));
     }
 
     public function testSingletonInstance()
@@ -99,6 +99,9 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf("Resolver", $this->container->newInstance("Resolver"));
         $this->assertInstanceOf("extendClass", $this->container->qualifier('sample'));
         $this->assertInstanceOf("contextualExtendClass", $this->container->qualifier('contextual'));
+
+        $this->container->flushInstance('contextual');
+        $this->assertNull($this->container->qualifier('contextual'));
         $this->container->flushInstance();
         $this->assertNull($this->container->qualifier('sample'));
     }
@@ -127,7 +130,6 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $this->container->setParameters('abstract', ['param' => 'testing']);
         $this->assertInternalType('array', $this->container->getParameters());
-
         $this->assertNull($this->container->qualifier('abstract'));
     }
 
@@ -188,10 +190,12 @@ abstract class AbstractResolver
 
 class extendClass extends AbstractResolver {
 
+    public $param = 0;
 }
 
 class contextualExtendClass extends AbstractResolver {
 
+    public $param = 1;
 }
 
 class Resolver

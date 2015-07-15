@@ -84,7 +84,7 @@ class Resolver
      */
     protected function resolveSingleton(ReflectionClass $reflectionClass, $abstract, array $dependencies = [])
     {
-        if (!self::$instance[$abstract]) {
+        if (!isset(self::$instance[$abstract])) {
             self::$instance[$abstract] = $reflectionClass->newInstanceArgs($dependencies);
         }
 

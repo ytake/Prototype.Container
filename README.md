@@ -8,18 +8,7 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/d8a4459f-1af6-4bd6-b5f0-6b70693d6a44/big.png)](https://insight.sensiolabs.com/projects/d8a4459f-1af6-4bd6-b5f0-6b70693d6a44)
 
 easy dependency injection / service container  
-**for >=php5.5**
-
-refactor [Iono.Container](https://github.com/ytake/Iono.Container)
-## future plan
-for Annotations
- - @Autowired
- - @Component
- - @Inject
- - @Qualifier
- - @Resource
- - @Scope
- - @Value  
+**for >=php5.4**
 
 and lightweight Compiler..
 
@@ -38,6 +27,7 @@ for concrete & abstract class
 interface ResolveInterface
 {
     public function getInstance();
+    
 }
 
 /**
@@ -46,6 +36,7 @@ interface ResolveInterface
 class ResolveClass implements ResolveInterface
 {
     protected $value;
+    
     public function getInstance()
     {
         return $this;
@@ -75,11 +66,11 @@ $instance = $this->container->newInstance("ResolveInterface");
 ```
 
 ### service locator
-string?
+for string
 ```php
 $context = $this->container->newInstance("iono.container.tests");
 ```
-object?
+for object
 ```php
 $this->container->binder("std.class", new \stdClass());
 $context = $this->container->newInstance("std.class");
@@ -106,4 +97,15 @@ parameters override
 $class = $this->container->newInstance("ResolveConstructor", ["arg" => "dependency3"]);
 //
 $class = $this->container->newInstance("ResolveConstructor", ["arg" => $this->container->newInstance("stdclass")]);
+```
+
+### qualifier
+contextual binding
+```php
+// bind to same interface
+$this->container->register("ResolveInterface", "Class1")->component('class1');
+$this->container->register("ResolveInterface", 'Class2')->component('class2');
+
+$this->container->qualifier('class1');
+$this->container->qualifier('class2');
 ```

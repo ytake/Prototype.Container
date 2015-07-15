@@ -52,11 +52,11 @@ class Container implements ContainerInterface, ContextualInterface
     /**
      * @param $abstract
      * @param $concrete
-     * @return void
+     * @return Component
      */
     public function singleton($abstract, $concrete)
     {
-        $this->register($abstract, $concrete, Scope::SINGLETON);
+        return $this->register($abstract, $concrete, Scope::SINGLETON);
     }
 
     /**
@@ -120,6 +120,10 @@ class Container implements ContainerInterface, ContextualInterface
         unset($this->bindings[$abstract]);
         unset($this->parameters[$abstract]);
         unset($this->shares[$abstract]);
+
+        foreach ($this->component as $key => $bind) {
+            unset($this->component[$key]);
+        }
     }
 
     /**
@@ -140,7 +144,12 @@ class Container implements ContainerInterface, ContextualInterface
     {
         if (isset($this->component[$name])) {
             foreach ($this->component[$name] as $key => $bind) {
-                return $this->newInstance($bind);
+                $tmp = $this->bindings[$key];
+                $this->bindings[$key] = $bind;
+                $instance = $this->newInstance($key);
+                $this->bindings[$key] = $tmp;
+                unset($tmp);
+                return $instance;
             }
         }
 

@@ -1,5 +1,5 @@
 <?php
-namespace Prototype\Container;
+namespace Iono\Proto\Container;
 
 /**
  * Class Scope

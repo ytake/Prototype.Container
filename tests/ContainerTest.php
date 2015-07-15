@@ -2,12 +2,12 @@
 
 class ContainerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Prototype\Container\Container */
+    /** @var \Iono\Proto\Container\Container */
     protected $container;
 
     protected function setUp()
     {
-        $this->container = new \Prototype\Container\Container();
+        $this->container = new \Iono\Proto\Container\Container();
     }
 
     public function testBasicInstance()
@@ -85,7 +85,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Prototype\Container\Exception\InstantiableException
+     * @expectedException \Iono\Proto\Container\Exception\InstantiableException
      */
     public function testAbstractClass()
     {
@@ -115,6 +115,22 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertNull($this->container->qualifier('sample'));
     }
+
+    public function testBindingAccessor()
+    {
+        $this->container->register('abstract', 'accessor');
+        $this->assertInternalType('array', $this->container->getBinding());
+        $this->assertSame('accessor', $this->container->getBinding('abstract'));
+    }
+
+    public function testParameterAccessor()
+    {
+        $this->container->setParameters('abstract', ['param' => 'testing']);
+        $this->assertInternalType('array', $this->container->getParameters());
+
+        $this->assertNull($this->container->qualifier('abstract'));
+    }
+
 }
 
 /**

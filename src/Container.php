@@ -1,10 +1,11 @@
 <?php
-namespace Prototype\Container;
+
+namespace Iono\Proto\Container;
 
 /**
  * Class Container
- * @package Prototype\Container
- * @author yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
+ * @package Iono\Proto\Container
+ * @author  yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
 class Container implements ContainerInterface, ContextualInterface
 {
@@ -18,12 +19,12 @@ class Container implements ContainerInterface, ContextualInterface
     /** @var array */
     protected $shares = [];
 
-    /** @var array  */
+    /** @var array */
     protected $component = [];
 
     /**
      * get instance from container
-     * @param $abstract
+     * @param       $abstract
      * @param array $parameters
      * @return object
      */
@@ -33,8 +34,8 @@ class Container implements ContainerInterface, ContextualInterface
     }
 
     /**
-     * @param $abstract
-     * @param $concrete
+     * @param          $abstract
+     * @param          $concrete
      * @param bool|int $scope
      * @return Component
      */
@@ -44,6 +45,7 @@ class Container implements ContainerInterface, ContextualInterface
         if ($scope) {
             $this->shares[$abstract] = $scope;
         }
+
         return new Component($this, $abstract);
     }
 
@@ -58,7 +60,7 @@ class Container implements ContainerInterface, ContextualInterface
     }
 
     /**
-     * @param $abstract
+     * @param       $abstract
      * @param array $parameters
      * @return void
      */
@@ -71,8 +73,12 @@ class Container implements ContainerInterface, ContextualInterface
      * @param $abstract
      * @return null
      */
-    public function getParameters($abstract)
+    public function getParameters($abstract = null)
     {
+        if (is_null($abstract)) {
+            return $this->parameters;
+        }
+
         return (isset($this->parameters[$abstract])) ? $this->parameters[$abstract] : null;
     }
 
@@ -80,8 +86,12 @@ class Container implements ContainerInterface, ContextualInterface
      * @param $abstract
      * @return null
      */
-    public function getBinding($abstract)
+    public function getBinding($abstract = null)
     {
+        if (is_null($abstract)) {
+            return $this->bindings;
+        }
+
         return (isset($this->bindings[$abstract])) ? $this->bindings[$abstract] : null;
     }
 
@@ -99,11 +109,12 @@ class Container implements ContainerInterface, ContextualInterface
      */
     public function flushInstance($abstract = null)
     {
-        if(is_null($abstract)) {
+        if (is_null($abstract)) {
             $this->bindings = [];
             $this->parameters = [];
             $this->shares = [];
             $this->component = [];
+
             return;
         }
         unset($this->bindings[$abstract]);
@@ -127,11 +138,12 @@ class Container implements ContainerInterface, ContextualInterface
      */
     public function qualifier($name)
     {
-        if(isset($this->component[$name])) {
-            foreach($this->component[$name] as $key => $bind) {
+        if (isset($this->component[$name])) {
+            foreach ($this->component[$name] as $key => $bind) {
                 return $this->newInstance($bind);
             }
         }
+
         return null;
     }
 

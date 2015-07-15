@@ -1,9 +1,9 @@
 <?php
-namespace Prototype\Container\Exception;
+namespace Iono\Proto\Container\Exception;
 
 /**
  * Class InstantiableException
- * @package Prototype\Container\Exception
+ * @package Iono\Proto\Container\Exception
  * @author yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
 class InstantiableException extends \Exception

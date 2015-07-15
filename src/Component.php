@@ -1,9 +1,10 @@
 <?php
-namespace Prototype\Container;
+
+namespace Iono\Proto\Container;
 
 /**
  * Class Component
- * @package Iono\Container
+ * @package Iono\Proto\Container
  * @author yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
 class Component

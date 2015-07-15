@@ -1,9 +1,10 @@
 <?php
-namespace Prototype\Container;
+
+namespace Iono\Proto\Container;
 
 /**
  * Interface ContainerInterface
- * @package Prototype\Container
+ * @package Iono\Proto\Container
  */
 interface ContainerInterface 
 {
@@ -40,18 +41,18 @@ interface ContainerInterface
      * @param $abstract
      * @return mixed
      */
-    public function getParameters($abstract);
-
-    /**
-     * @param $abstract
-     * @return mixed
-     */
-    public function getBinding($abstract);
-
-    /**
-     * @param $abstract
-     * @return mixed
-     */
     public function getShare($abstract);
+
+    /**
+     * @param null $abstract
+     * @return mixed
+     */
+    public function getParameters($abstract = null);
+
+    /**
+     * @param $abstract
+     * @return null
+     */
+    public function getBinding($abstract = null);
 
 }

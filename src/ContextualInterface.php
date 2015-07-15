@@ -1,5 +1,6 @@
 <?php
-namespace Prototype\Container;
+
+namespace Iono\Proto\Container;
 
 /**
  * Interface ContextualInterface

@@ -1,5 +1,5 @@
 {
-  "name": "ytake/prototype.container",
+  "name": "iono/proto-container",
   "description": "dependency injection / service container",
   "minimum-stability": "stable",
   "license": "MIT",
@@ -22,7 +22,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Prototype\\Container\\": "src/"
+      "Iono\\Proto\\Container\\": "src/"
     }
   }
 }

@@ -1,13 +1,15 @@
 <?php
-namespace Prototype\Container;
+
+namespace Iono\Proto\Container;
 
 use ReflectionClass;
-use Prototype\Container\Exception\InstantiableException;
+use ReflectionParameter;
+use Iono\Proto\Container\Exception\InstantiableException;
 
 /**
  * Class Resolver
- * @package Prototype\Container
- * @author yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
+ * @package Iono\Proto\Container
+ * @author  yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
 class Resolver
 {
@@ -27,7 +29,7 @@ class Resolver
     }
 
     /**
-     * @param $abstract
+     * @param       $abstract
      * @param array $parameters
      * @return mixed|null|object
      * @throws InstantiableException
@@ -38,7 +40,7 @@ class Resolver
     }
 
     /**
-     * @param $abstract
+     * @param       $abstract
      * @param array $parameters
      * @return mixed|null|object
      * @throws InstantiableException
@@ -70,13 +72,14 @@ class Resolver
         if ($this->container->getShare($abstract) === SCOPE::SINGLETON) {
             return $this->resolveSingleton($reflectionClass, $abstract, $dependencies);
         }
+
         return $reflectionClass->newInstanceArgs($dependencies);
     }
 
     /**
      * @param ReflectionClass $reflectionClass
-     * @param $abstract
-     * @param array $dependencies
+     * @param                 $abstract
+     * @param array           $dependencies
      * @return mixed
      */
     protected function resolveSingleton(ReflectionClass $reflectionClass, $abstract, array $dependencies = [])
@@ -84,12 +87,13 @@ class Resolver
         if (!self::$instance[$abstract]) {
             self::$instance[$abstract] = $reflectionClass->newInstanceArgs($dependencies);
         }
+
         return self::$instance[$abstract];
     }
 
     /**
      * @param ReflectionClass $reflectionClass
-     * @param array $parameters
+     * @param array           $parameters
      * @return array
      * @throws InstantiableException
      */
@@ -101,14 +105,9 @@ class Resolver
             if ($constructorParameters = $constructor->getParameters()) {
                 foreach ($constructorParameters as $constructorParameter) {
 
-                    if ($constructorParameter->getClass()) {
-                        $resolved[] = $this->resolveInstance($constructorParameter->getClass()->name);
-                    }
+                    $resolved = $this->RecursiveResolver($constructorParameter, $resolved);
 
-                    if (isset($this->container->getParameters($reflectionClass->name)[$constructorParameter->name])) {
-                        $resolved[$constructorParameter->name]
-                            = $this->container->getParameters($reflectionClass->name)[$constructorParameter->name];
-                    }
+                    $resolved = $this->resolveParameters($reflectionClass, $constructorParameter, $resolved);
 
                     if (isset($parameters[$constructorParameter->name])) {
                         $resolved[$constructorParameter->name] = $parameters[$constructorParameter->name];
@@ -116,6 +115,45 @@ class Resolver
                 }
             }
         }
+
+        return $resolved;
+    }
+
+    /**
+     * @param ReflectionClass     $reflectionClass
+     * @param ReflectionParameter $constructorParameter
+     * @param array               $resolved
+     * @return array
+     */
+    protected function resolveParameters(
+        ReflectionClass $reflectionClass,
+        ReflectionParameter $constructorParameter,
+        array $resolved
+    ) {
+        if (isset($this->container->getParameters($reflectionClass->name)[$constructorParameter->name])) {
+            $resolved[$constructorParameter->name]
+                = $this->container->getParameters($reflectionClass->name)[$constructorParameter->name];
+
+            return $resolved;
+        }
+
+        return $resolved;
+    }
+
+    /**
+     * @param \ReflectionParameter $constructorParameter
+     * @param array                $resolved
+     * @return array
+     * @throws InstantiableException
+     */
+    protected function RecursiveResolver(ReflectionParameter $constructorParameter, array $resolved)
+    {
+        if ($constructorParameter->getClass()) {
+            $resolved[] = $this->resolveInstance($constructorParameter->getClass()->name);
+
+            return $resolved;
+        }
+
         return $resolved;
     }
 

@@ -1,15 +1,24 @@
 <?php
+/**
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 namespace Iono\Proto\Container;
 
 /**
  * Class Container
+ *
  * @package Iono\Proto\Container
  * @author  yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
 class Container implements ContainerInterface, ContextualInterface
 {
-
     /** @var array */
     protected $bindings = [];
 
@@ -24,6 +33,7 @@ class Container implements ContainerInterface, ContextualInterface
 
     /**
      * get instance from container
+     *
      * @param       $abstract
      * @param array $parameters
      * @return object
@@ -41,10 +51,8 @@ class Container implements ContainerInterface, ContextualInterface
      */
     public function register($abstract, $concrete, $scope = Scope::PROTOTYPE)
     {
-        $this->bindings[$abstract] = $concrete;
-        if ($scope) {
-            $this->shares[$abstract] = $scope;
-        }
+        $this->bindings[$abstract]['concrete'] = $concrete;
+        $this->bindings[$abstract]['scope'] = $scope;
 
         return new Component($this, $abstract);
     }
@@ -92,7 +100,7 @@ class Container implements ContainerInterface, ContextualInterface
             return $this->bindings;
         }
 
-        return (isset($this->bindings[$abstract])) ? $this->bindings[$abstract] : null;
+        return (isset($this->bindings[$abstract]['concrete'])) ? $this->bindings[$abstract]['concrete'] : null;
     }
 
     /**
@@ -101,7 +109,7 @@ class Container implements ContainerInterface, ContextualInterface
      */
     public function getShare($abstract)
     {
-        return (isset($this->shares[$abstract])) ? $this->shares[$abstract] : null;
+        return (isset($this->bindings[$abstract]['scope'])) ? $this->bindings[$abstract]['scope'] : null;
     }
 
     /**
@@ -133,10 +141,12 @@ class Container implements ContainerInterface, ContextualInterface
     public function addComponent($name, $abstract)
     {
         $this->component[$name][$abstract] = $this->bindings[$abstract];
+        unset($this->bindings[$abstract]);
     }
 
     /**
      * use id, get instance from container
+     *
      * @param $name
      * @return null|object
      */
@@ -144,16 +154,14 @@ class Container implements ContainerInterface, ContextualInterface
     {
         if (isset($this->component[$name])) {
             foreach ($this->component[$name] as $key => $bind) {
-                $tmp = $this->bindings[$key];
                 $this->bindings[$key] = $bind;
                 $instance = $this->newInstance($key);
-                $this->bindings[$key] = $tmp;
-                unset($tmp);
+                unset($this->bindings[$key]);
+
                 return $instance;
             }
         }
 
         return null;
     }
-
 }

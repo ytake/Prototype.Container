@@ -1,4 +1,13 @@
 <?php
+/**
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 namespace Iono\Proto\Container;
 
@@ -13,7 +22,6 @@ use Iono\Proto\Container\Exception\InstantiableException;
  */
 class Resolver
 {
-
     /** @var ContainerInterface */
     protected $container;
 
@@ -105,7 +113,7 @@ class Resolver
             if ($constructorParameters = $constructor->getParameters()) {
                 foreach ($constructorParameters as $constructorParameter) {
 
-                    $resolved = $this->RecursiveResolver($constructorParameter, $resolved);
+                    $resolved = $this->recursiveResolver($constructorParameter, $resolved);
 
                     $resolved = $this->resolveParameters($reflectionClass, $constructorParameter, $resolved);
 
@@ -146,7 +154,7 @@ class Resolver
      * @return array
      * @throws InstantiableException
      */
-    protected function RecursiveResolver(ReflectionParameter $constructorParameter, array $resolved)
+    protected function recursiveResolver(ReflectionParameter $constructorParameter, array $resolved)
     {
         if ($constructorParameter->getClass()) {
             $resolved[] = $this->resolveInstance($constructorParameter->getClass()->name);
@@ -156,5 +164,4 @@ class Resolver
 
         return $resolved;
     }
-
 }

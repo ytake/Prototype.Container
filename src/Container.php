@@ -9,15 +9,15 @@
  * THE SOFTWARE.
  */
 
-namespace Iono\Proto\Container;
+namespace Iono\ProtoType\Container;
 
 /**
  * Class Container
  *
- * @package Iono\Proto\Container
+ * @package Iono\ProtoType\Container
  * @author  yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
-class Container implements ContainerInterface, ContextualInterface
+class Container implements ContainerInterface
 {
     /** @var array */
     protected $bindings = [];
@@ -30,6 +30,9 @@ class Container implements ContainerInterface, ContextualInterface
 
     /** @var array */
     protected $component = [];
+
+    /** @var string */
+    protected $identifier;
 
     /**
      * get instance from container
@@ -47,20 +50,41 @@ class Container implements ContainerInterface, ContextualInterface
      * @param          $abstract
      * @param          $concrete
      * @param bool|int $scope
-     * @return Component
+     * @return $this
      */
     public function register($abstract, $concrete, $scope = Scope::PROTOTYPE)
     {
+        if (!is_null($this->identifier)) {
+            $this->component[$this->identifier][$abstract] = [
+                'concrete' => $concrete,
+                'scope' => $scope
+            ];
+
+            return $this;
+        }
         $this->bindings[$abstract]['concrete'] = $concrete;
         $this->bindings[$abstract]['scope'] = $scope;
 
-        return new Component($this, $abstract);
+        return $this;
+    }
+
+    /**
+     * binding identifier
+     *
+     * @param $identifier
+     * @return $this
+     */
+    public function identifier($identifier)
+    {
+        $this->identifier = $identifier;
+
+        return $this;
     }
 
     /**
      * @param $abstract
      * @param $concrete
-     * @return Component
+     * @return $this
      */
     public function singleton($abstract, $concrete)
     {
@@ -74,30 +98,37 @@ class Container implements ContainerInterface, ContextualInterface
      */
     public function setParameters($abstract, array $parameters = [])
     {
+        if (!is_null($this->identifier)) {
+            $this->component[$this->identifier][$abstract]['parameters'] = $parameters;
+        }
         $this->parameters[$abstract] = $parameters;
     }
 
     /**
-     * @param $abstract
+     * @param      $abstract
+     * @param null $identifier
      * @return null
      */
-    public function getParameters($abstract = null)
+    public function getParameters($abstract, $identifier = null)
     {
-        if (is_null($abstract)) {
-            return $this->parameters;
+        if (!is_null($identifier)) {
+            return (isset($this->component[$identifier][$abstract]['parameters']))
+                ? $this->component[$identifier][$abstract]['parameters'] : null;
         }
 
         return (isset($this->parameters[$abstract])) ? $this->parameters[$abstract] : null;
     }
 
     /**
-     * @param $abstract
-     * @return null
+     * @param null $abstract
+     * @param null $identifier
+     * @return array|null
      */
-    public function getBinding($abstract = null)
+    public function getBinding($abstract, $identifier = null)
     {
-        if (is_null($abstract)) {
-            return $this->bindings;
+        if (!is_null($identifier)) {
+            return (isset($this->component[$identifier][$abstract]['concrete']))
+                ? $this->component[$identifier][$abstract]['concrete'] : null;
         }
 
         return (isset($this->bindings[$abstract]['concrete'])) ? $this->bindings[$abstract]['concrete'] : null;
@@ -107,8 +138,13 @@ class Container implements ContainerInterface, ContextualInterface
      * @param $abstract
      * @return null
      */
-    public function getShare($abstract)
+    public function getShare($abstract, $identifier = null)
     {
+        if (!is_null($identifier)) {
+            return (isset($this->component[$identifier][$abstract]['scope']))
+                ? $this->component[$identifier][$abstract]['scope'] : null;
+        }
+
         return (isset($this->bindings[$abstract]['scope'])) ? $this->bindings[$abstract]['scope'] : null;
     }
 
@@ -132,16 +168,6 @@ class Container implements ContainerInterface, ContextualInterface
         foreach ($this->component as $key => $bind) {
             unset($this->component[$key]);
         }
-    }
-
-    /**
-     * @param $name
-     * @param $abstract
-     */
-    public function addComponent($name, $abstract)
-    {
-        $this->component[$name][$abstract] = $this->bindings[$abstract];
-        unset($this->bindings[$abstract]);
     }
 
     /**

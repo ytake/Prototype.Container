@@ -9,12 +9,12 @@
  * THE SOFTWARE.
  */
 
-namespace Iono\Proto\Container;
+namespace Iono\ProtoType\Container;
 
 /**
  * Class Scope
  *
- * @package Prototype\Container
+ * @package Iono\ProtoType\Container
  * @author  yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
 final class Scope

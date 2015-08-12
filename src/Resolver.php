@@ -9,15 +9,16 @@
  * THE SOFTWARE.
  */
 
-namespace Iono\Proto\Container;
+namespace Iono\ProtoType\Container;
 
 use ReflectionClass;
 use ReflectionParameter;
-use Iono\Proto\Container\Exception\InstantiableException;
+use Iono\ProtoType\Container\Exception\InstantiableException;
 
 /**
  * Class Resolver
- * @package Iono\Proto\Container
+ *
+ * @package Iono\ProtoType\Container
  * @author  yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
 class Resolver

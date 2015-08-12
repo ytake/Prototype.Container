@@ -9,12 +9,12 @@
  * THE SOFTWARE.
  */
 
-namespace Iono\Proto\Container;
+namespace Iono\ProtoType\Container;
 
 /**
  * Interface ContainerInterface
  *
- * @package Iono\Proto\Container
+ * @package Iono\ProtoType\Container
  */
 interface ContainerInterface
 {
@@ -54,14 +54,16 @@ interface ContainerInterface
     public function getShare($abstract);
 
     /**
-     * @param null $abstract
+     * @param      $abstract
+     * @param null $identifier
      * @return mixed
      */
-    public function getParameters($abstract = null);
+    public function getParameters($abstract, $identifier = null);
 
     /**
-     * @param $abstract
-     * @return string[]
+     * @param      $abstract
+     * @param null $identifier
+     * @return mixed
      */
-    public function getBinding($abstract = null);
+    public function getBinding($abstract, $identifier = null);
 }

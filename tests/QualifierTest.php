@@ -1,6 +1,6 @@
 <?php
 
-use Iono\Proto\Container\Container;
+use Iono\ProtoType\Container\Container;
 
 class QualifierTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,8 +15,8 @@ class QualifierTest extends \PHPUnit_Framework_TestCase
 
     public function testSingletonQualifier()
     {
-        $this->container->singleton("Resolvable", "ResolvePatternOne")->component('testing');
-        $this->container->register("Resolvable", 'ResolvePatternTwo')->component('contextual');
+        $this->container->identifier('testing')->singleton("Resolvable", "ResolvePatternOne");
+        $this->container->identifier('contextual')->register("Resolvable", 'ResolvePatternTwo');
 
         $testing = $this->container->qualifier('testing');
         $testing->param = 100;
@@ -50,6 +50,5 @@ class ResolvePatternOne implements Resolvable
  */
 class ResolvePatternTwo implements Resolvable
 {
-
     public $param = 1;
 }

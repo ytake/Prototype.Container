@@ -9,12 +9,12 @@
  * THE SOFTWARE.
  */
 
-namespace Iono\Proto\Container\Exception;
+namespace Iono\ProtoType\Container\Exception;
 
 /**
  * Class InstantiableException
  *
- * @package Iono\Proto\Container\Exception
+ * @package Iono\ProtoType\Container\Exception
  * @author  yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  */
 class InstantiableException extends \Exception

@@ -2,12 +2,12 @@
 
 class ContainerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Iono\Proto\Container\Container */
+    /** @var \Iono\ProtoType\Container\Container */
     protected $container;
 
     protected function setUp()
     {
-        $this->container = new \Iono\Proto\Container\Container();
+        $this->container = new Iono\ProtoType\Container\Container();
     }
 
     public function testBasicInstance()
@@ -85,7 +85,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Iono\Proto\Container\Exception\InstantiableException
+     * @expectedException \Iono\ProtoType\Container\Exception\InstantiableException
      */
     public function testAbstractClass()
     {
@@ -94,8 +94,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testAbstractResolveClass()
     {
-        $this->container->register("AbstractResolver", "extendClass")->component('sample');
-        $this->container->register("AbstractResolver",'contextualExtendClass')->component('contextual');
+        $this->container->identifier('sample')->register("AbstractResolver", "extendClass");
+        $this->container->identifier('contextual')->register("AbstractResolver",'contextualExtendClass');
 
         $this->assertInstanceOf("extendClass", $this->container->qualifier('sample'));
         $this->assertInstanceOf("contextualExtendClass", $this->container->qualifier('contextual'));
@@ -108,7 +108,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testFlushContainer()
     {
-        $this->container->register("AbstractResolver", "extendClass")->component('sample');
+        $this->container->identifier('sample')->register("AbstractResolver", "extendClass");
         $this->container->flushInstance();
         $this->assertNull($this->container->qualifier('sample'));
         $this->container->flushInstance('testing');
@@ -122,14 +122,12 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     public function testBindingAccessor()
     {
         $this->container->register('abstract', 'accessor');
-        $this->assertInternalType('array', $this->container->getBinding());
         $this->assertSame('accessor', $this->container->getBinding('abstract'));
     }
 
     public function testParameterAccessor()
     {
         $this->container->setParameters('abstract', ['param' => 'testing']);
-        $this->assertInternalType('array', $this->container->getParameters());
         $this->assertNull($this->container->qualifier('abstract'));
     }
 

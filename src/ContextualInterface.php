@@ -9,16 +9,15 @@
  * THE SOFTWARE.
  */
 
-namespace Iono\Proto\Container;
+namespace Iono\ProtoType\Container;
 
 /**
  * Interface ContextualInterface
  *
- * @package Prototype\Container
+ * @package Iono\ProtoType\Container
  */
 interface ContextualInterface
 {
-
     /**
      * @param $name
      * @param $abstract

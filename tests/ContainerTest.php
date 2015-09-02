@@ -12,42 +12,36 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testBasicInstance()
     {
-        $context = $this->container->newInstance("iono.container.tests");
+        $context = $this->container->get("iono.container.tests");
         $this->assertSame("iono.container.tests", $context);
 
         $this->container->register("std.class", new \stdClass());
-        $context = $this->container->newInstance("std.class");
+        $context = $this->container->get("std.class");
         $this->assertInstanceOf("stdClass", $context);
 
         $this->container->register("ResolveInterface", "ResolveClass");
-        $instance = $this->container->newInstance("ResolveInterface");
+        $instance = $this->container->get("ResolveInterface");
         $this->assertInstanceOf("ResolveClass", $instance);
+
         $instance->setValue("singleton");
         $this->assertSame("singleton", $instance->getValue());
-        $instance = $this->container->newInstance("ResolveInterface");
+
+        $instance = $this->container->get("ResolveInterface");
         $this->assertNull($instance->getValue());
 
-        $class = $this->container->newInstance("ResolveConstructor");
+        $class = $this->container->get("ResolveConstructor");
         $this->assertInstanceOf("ResolveConstructor", $class);
         $this->assertInstanceOf("ResolveClass", $class->getInstance());
-
-        $class = $this->container->newInstance("ResolveConstructor", ["arg" => "dependency"]);
-        $this->assertInstanceOf("ResolveConstructor", $class);
-        $this->assertInstanceOf("ResolveClass", $class->getInstance());
-        $this->assertSame("dependency", $class->getArg());
     }
 
     public function testSeparateInjectParamsInstance()
     {
         $this->container->register("ResolveInterface", "ResolveClass");
         $this->container->setParameters("ResolveConstructor", ["arg" => "dependency2"]);
-        $class = $this->container->newInstance("ResolveConstructor");
+        $class = $this->container->get("ResolveConstructor");
         $this->assertInstanceOf("ResolveConstructor", $class);
         $this->assertInstanceOf("ResolveClass", $class->getInstance());
         $this->assertSame("dependency2", $class->getArg());
-
-        $class = $this->container->newInstance("ResolveConstructor", ["arg" => "dependency3"]);
-        $this->assertSame("dependency3", $class->getArg());
     }
 
     public function testGetInstance()
@@ -55,15 +49,10 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->container->register("ResolveInterface", "ResolveClass");
         $this->container->register("stdclass", "stdClass");
         $this->container->setParameters("ResolveConstructor", ["arg" => "dependency2"]);
-        $class = $this->container->newInstance("ResolveConstructor");
+        $class = $this->container->get("ResolveConstructor");
         $this->assertInstanceOf("ResolveConstructor", $class);
         $this->assertInstanceOf("ResolveClass", $class->getInstance());
         $this->assertSame("dependency2", $class->getArg());
-
-        $class = $this->container->newInstance("ResolveConstructor", ["arg" => new \stdClass()]);
-        $this->assertInstanceOf("stdClass", $class->getArg());
-        $class = $this->container->newInstance("ResolveConstructor", ["arg" => $this->container->newInstance("stdclass")]);
-        $this->assertInstanceOf("stdClass", $class->getArg());
     }
 
     public function testGetClosure()
@@ -71,16 +60,17 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->container->register("closure", function () {
             return new \stdClass();
         });
-        $this->assertInstanceOf('stdClass', $this->container->newInstance('closure'));
+        $this->assertInstanceOf('stdClass', $this->container->get('closure'));
     }
 
     public function testSingletonInstance()
     {
         $this->container->singleton("ResolveInterface", "ResolveClass");
-        $instance = $this->container->newInstance("ResolveInterface");
+        $instance = $this->container->get("ResolveInterface");
         $instance->setValue("singleton");
         $this->assertSame("singleton", $instance->getValue());
-        $instance = $this->container->newInstance("ResolveInterface");
+
+        $instance = $this->container->get("ResolveInterface");
         $this->assertSame("singleton", $instance->getValue());
     }
 
@@ -89,48 +79,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      */
     public function testAbstractClass()
     {
-        $this->container->newInstance("Resolver");
+        $this->container->get("Resolver");
     }
-
-    public function testAbstractResolveClass()
-    {
-        $this->container->identifier('sample')->register("AbstractResolver", "extendClass");
-        $this->container->identifier('contextual')->register("AbstractResolver",'contextualExtendClass');
-
-        $this->assertInstanceOf("extendClass", $this->container->qualifier('sample'));
-        $this->assertInstanceOf("contextualExtendClass", $this->container->qualifier('contextual'));
-
-        $this->container->flushInstance('contextual');
-        $this->assertNull($this->container->qualifier('contextual'));
-        $this->container->flushInstance();
-        $this->assertNull($this->container->qualifier('sample'));
-    }
-
-    public function testFlushContainer()
-    {
-        $this->container->identifier('sample')->register("AbstractResolver", "extendClass");
-        $this->container->flushInstance();
-        $this->assertNull($this->container->qualifier('sample'));
-        $this->container->flushInstance('testing');
-    }
-
-    public function testNullReturnQualifier()
-    {
-        $this->assertNull($this->container->qualifier('sample'));
-    }
-
-    public function testBindingAccessor()
-    {
-        $this->container->register('abstract', 'accessor');
-        $this->assertSame('accessor', $this->container->getBinding('abstract'));
-    }
-
-    public function testParameterAccessor()
-    {
-        $this->container->setParameters('abstract', ['param' => 'testing']);
-        $this->assertNull($this->container->qualifier('abstract'));
-    }
-
 }
 
 /**

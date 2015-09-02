@@ -23,16 +23,16 @@ use Iono\ProtoType\Container\Exception\InstantiableException;
  */
 class Resolver
 {
-    /** @var ContainerInterface */
+    /** @var Container */
     protected $container;
 
     /** @var */
     private static $instance;
 
     /**
-     * @param ContainerInterface $container
+     * @param Container $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(Container $container)
     {
         $this->container = $container;
     }
@@ -73,7 +73,7 @@ class Resolver
             return $concrete;
         }
         if (!$reflectionClass->isInstantiable()) {
-            throw new InstantiableException("Errors");
+            throw new InstantiableException("{$concrete} not instantiable error");
         }
 
         $dependencies = $this->resolveDependencies($reflectionClass, $parameters);
@@ -139,7 +139,7 @@ class Resolver
         ReflectionParameter $constructorParameter,
         array $resolved
     ) {
-        if (isset($this->container->getParameters($reflectionClass->name)[$constructorParameter->name])) {
+        if (isset($this->container->getParameters($reflectionClass->getName())[$constructorParameter->name])) {
             $resolved[$constructorParameter->name]
                 = $this->container->getParameters($reflectionClass->name)[$constructorParameter->name];
 

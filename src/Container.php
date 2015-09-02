@@ -11,6 +11,8 @@
 
 namespace Iono\ProtoType\Container;
 
+use Interop\Container\ContainerInterface;
+
 /**
  * Class Container
  *
@@ -28,22 +30,22 @@ class Container implements ContainerInterface
     /** @var array */
     protected $shares = [];
 
-    /** @var array */
-    protected $component = [];
-
-    /** @var string */
-    protected $identifier;
+    /**
+     * @param string $abstract
+     * @return mixed|null|object
+     */
+    public function get($abstract)
+    {
+        return (new Resolver($this))->makeInstance($abstract);
+    }
 
     /**
-     * get instance from container
-     *
-     * @param       $abstract
-     * @param array $parameters
-     * @return object
+     * @param string $abstract
+     * @return bool
      */
-    public function newInstance($abstract, array $parameters = [])
+    public function has($abstract)
     {
-        return (new Resolver($this))->makeInstance($abstract, $parameters);
+        return (isset($this->bindings[$abstract])) ? true : false;
     }
 
     /**
@@ -54,29 +56,8 @@ class Container implements ContainerInterface
      */
     public function register($abstract, $concrete, $scope = Scope::PROTOTYPE)
     {
-        if (!is_null($this->identifier)) {
-            $this->component[$this->identifier][$abstract] = [
-                'concrete' => $concrete,
-                'scope' => $scope
-            ];
-
-            return $this;
-        }
         $this->bindings[$abstract]['concrete'] = $concrete;
         $this->bindings[$abstract]['scope'] = $scope;
-
-        return $this;
-    }
-
-    /**
-     * binding identifier
-     *
-     * @param $identifier
-     * @return $this
-     */
-    public function identifier($identifier)
-    {
-        $this->identifier = $identifier;
 
         return $this;
     }
@@ -98,9 +79,6 @@ class Container implements ContainerInterface
      */
     public function setParameters($abstract, array $parameters = [])
     {
-        if (!is_null($this->identifier)) {
-            $this->component[$this->identifier][$abstract]['parameters'] = $parameters;
-        }
         $this->parameters[$abstract] = $parameters;
     }
 
@@ -109,13 +87,8 @@ class Container implements ContainerInterface
      * @param null $identifier
      * @return null
      */
-    public function getParameters($abstract, $identifier = null)
+    public function getParameters($abstract)
     {
-        if (!is_null($identifier)) {
-            return (isset($this->component[$identifier][$abstract]['parameters']))
-                ? $this->component[$identifier][$abstract]['parameters'] : null;
-        }
-
         return (isset($this->parameters[$abstract])) ? $this->parameters[$abstract] : null;
     }
 
@@ -124,13 +97,8 @@ class Container implements ContainerInterface
      * @param null $identifier
      * @return array|null
      */
-    public function getBinding($abstract, $identifier = null)
+    public function getBinding($abstract)
     {
-        if (!is_null($identifier)) {
-            return (isset($this->component[$identifier][$abstract]['concrete']))
-                ? $this->component[$identifier][$abstract]['concrete'] : null;
-        }
-
         return (isset($this->bindings[$abstract]['concrete'])) ? $this->bindings[$abstract]['concrete'] : null;
     }
 
@@ -138,56 +106,25 @@ class Container implements ContainerInterface
      * @param $abstract
      * @return null
      */
-    public function getShare($abstract, $identifier = null)
+    public function getShare($abstract)
     {
-        if (!is_null($identifier)) {
-            return (isset($this->component[$identifier][$abstract]['scope']))
-                ? $this->component[$identifier][$abstract]['scope'] : null;
-        }
-
         return (isset($this->bindings[$abstract]['scope'])) ? $this->bindings[$abstract]['scope'] : null;
     }
 
     /**
      * @param null $abstract
      */
-    public function flushInstance($abstract = null)
+    public function flush($abstract = null)
     {
         if (is_null($abstract)) {
             $this->bindings = [];
             $this->parameters = [];
             $this->shares = [];
-            $this->component = [];
 
             return;
         }
         unset($this->bindings[$abstract]);
         unset($this->parameters[$abstract]);
         unset($this->shares[$abstract]);
-
-        foreach ($this->component as $key => $bind) {
-            unset($this->component[$key]);
-        }
-    }
-
-    /**
-     * use id, get instance from container
-     *
-     * @param $name
-     * @return null|object
-     */
-    public function qualifier($name)
-    {
-        if (isset($this->component[$name])) {
-            foreach ($this->component[$name] as $key => $bind) {
-                $this->bindings[$key] = $bind;
-                $instance = $this->newInstance($key);
-                unset($this->bindings[$key]);
-
-                return $instance;
-            }
-        }
-
-        return null;
     }
 }

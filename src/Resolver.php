@@ -56,7 +56,7 @@ class Resolver
      */
     protected function resolveInstance($abstract, array $parameters = [])
     {
-        $concrete = (!is_null($this->container->getBinding($abstract))) ?
+        $concrete = (!is_null($this->container->has($abstract))) ?
             $this->container->getBinding($abstract) : null;
 
         if ($concrete instanceof \Closure) {
@@ -106,7 +106,7 @@ class Resolver
      * @return array
      * @throws InstantiableException
      */
-    protected function resolveDependencies(ReflectionClass $reflectionClass, $parameters = [])
+    protected function resolveDependencies(ReflectionClass $reflectionClass, array $parameters = [])
     {
         $resolved = [];
 
@@ -137,7 +137,7 @@ class Resolver
     protected function resolveParameters(
         ReflectionClass $reflectionClass,
         ReflectionParameter $constructorParameter,
-        array $resolved
+        array $resolved = []
     ) {
         if (isset($this->container->getParameters($reflectionClass->getName())[$constructorParameter->name])) {
             $resolved[$constructorParameter->name]
@@ -155,7 +155,7 @@ class Resolver
      * @return array
      * @throws InstantiableException
      */
-    protected function recursiveResolver(ReflectionParameter $constructorParameter, array $resolved)
+    protected function recursiveResolver(ReflectionParameter $constructorParameter, array $resolved = [])
     {
         if ($constructorParameter->getClass()) {
             $resolved[] = $this->resolveInstance($constructorParameter->getClass()->name);

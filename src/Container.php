@@ -79,12 +79,16 @@ class Container implements ContainerInterface
      */
     public function setParameters($abstract, array $parameters = [])
     {
+        if (isset($this->parameters[$abstract])) {
+            $this->parameters[$abstract] = array_merge($this->parameters[$abstract], $parameters);
+
+            return;
+        }
         $this->parameters[$abstract] = $parameters;
     }
 
     /**
-     * @param      $abstract
-     * @param null $identifier
+     * @param $abstract
      * @return null
      */
     public function getParameters($abstract)
@@ -93,9 +97,8 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @param null $abstract
-     * @param null $identifier
-     * @return array|null
+     * @param $abstract
+     * @return null
      */
     public function getBinding($abstract)
     {

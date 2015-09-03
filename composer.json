@@ -1,5 +1,5 @@
 {
-  "name": "iono/proto-container",
+  "name": "ytake/proto-container",
   "description": "dependency injection / service container",
   "minimum-stability": "stable",
   "license": "MIT",
